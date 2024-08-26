@@ -620,3 +620,54 @@ Ans:-  A StatefulSet is used for stateful applications that require stable, uniq
 
 
 # ############################################## Monitorning Tools #####################################################################
+
+
+# Prometheus
+
+Prometheus mostly depents on Time Series DataBase(TSDB).
+Prometheus connected to other servers to get a metrics and every server need to install or have node exporter. 
+Prometheus connected to node exporters and collect the data and stored in Timebase DB.
+prometeus works on 9090 port.
+
+node exporter running continously and getting collecting metrics from node.
+we can configure or add new targets to prometheus node exporter(vm only not containers) and configuration details in prometeus.yaml file. Prometheus hit default evry 25 seconds it will collect the metrics from node exporter and saved in time base DB.
+
+    
+# scrape_configs:
+     - targets: ["localhost:9090"]
+
+- job name: "node-exporter"
+        static_configs:
+        -  targets: ["172.31.83.66:9100]
+- job_name: "prometheus"
+    static_configs:
+    - targets: ["localhost:9090"]
+
+- job name: "ec2-scrapping"
+    ec2-sd-configs:
+    - region: us-east-1
+        port: 9100
+        filters:
+    - name:"tag:Monitoring" ## active server
+        values:
+        - true
+
+In ec2-sd-config we can add scrapping concept. prometheus monitoring entier region active servers. If we use filters we can configure tags in ec2 server like monitoring is true. so that particular one only prometheus collecting mentrics.
+
+        - job name: "ec2-scrapping"
+            ec2-sd-configs:
+            - region: us-east-1
+                port: 9100
+                filters:
+            - name:"tag:Monitoring" ## active server
+                values:
+                - true
+
+
+# Grafana
+Prometheus graphs are nor user friendy so we can use Grafana for that.
+It can get from multiple soureces . prometeus one of the sourece to grafana.
+Need to download grafana in prometheus server for better results i.e no lag.
+
+# Dynamic Scrapping:-
+In cloud and dyanmic invernments IP Address are temporary mens all ways change.
